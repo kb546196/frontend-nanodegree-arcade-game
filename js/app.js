@@ -1,10 +1,14 @@
 
+var totalScore = 0; 
 
 // Enemies our player must avoid
-var Enemy = function(x,y) {   
-								this.x = x; 
-								this.y = y;
-								this.speed = Math.floor((Math.random() * 200) + 100); // make an equation for the speed.  
+var Enemy = function() {   
+								this.x = (Math.floor((Math.random() * -300)) - 100); 
+								//console.log(this.x);
+								this.y = (Math.floor((Math.random() * 3)) * 85) + 55;
+								//console.log(this.y);
+								this.speed = (Math.floor((Math.random() * this.y)) + 125); 
+								//console.log(this.speed);  
 								this.sprite = 'images/enemy-bug.png';
 								}; 
 
@@ -19,10 +23,12 @@ Enemy.prototype.update = function(dt) {
 								this.x += this.speed * dt; 
 				}
 				else  {
-								this.x = -50; 
+								this.x = (Math.floor((Math.random() * -125)) - 50);; 
 				}
 				//if there is a collision between the player and the enemies then the position of the player is reset
 				if(player.x > this.x - 35 & player.x < this.x + 35 & player.y > this.y - 30 & player.y < this.y +30) {
+					totalScore = totalScore - 50;
+					console.log(totalScore); 
 					player.reset();
 				}
 };
@@ -30,19 +36,22 @@ Enemy.prototype.update = function(dt) {
 
 //Create enemies - currently one a lane - may need to change. 
 var allEnemies = []; 
+
 				(function setEnemies(){
-								allEnemies.push(new Enemy(100, 55));
-								allEnemies.push(new Enemy (150, 140));
-								allEnemies.push(new Enemy(100, 225));
-				}());
+				while (allEnemies.length < 6) {
+					allEnemies.push(new Enemy);
+					}
+				}
+				());
 
 // Player info 
 var Player = function() {
 				this.x = 200;
 				this.y = 400;
-				this.sprite = 'images/char-boy.png';
+				this.sprite ="images/char-boy.png";
 				this.reset();
 }
+
 
 //Draw the player on the screen
 Player.prototype.render = function () {
@@ -54,6 +63,19 @@ Player.prototype.reset = function () {
 	this.x = 200; 
 	this.y = 400; 
 }
+// This listens for key presses and sends the keys to your
+// Player.handleInput() method. You don't need to modify this.
+document.addEventListener('keyup', function(e) {
+                var allowedKeys = {
+                                37: 'left',
+                                38: 'up',
+                                39: 'right',
+                                40: 'down'
+                };
+    player.handleInput(allowedKeys[e.keyCode]);
+});
+
+var player = new Player;
 
 //Player handles input from keys but is stopped from moving our of screen
 Player.prototype.handleInput = function (key) {
@@ -69,9 +91,14 @@ Player.prototype.handleInput = function (key) {
 }; 
 Player.prototype.update = function () {
 	if (this.y < -30) {
+		totalScore = totalScore + 100;
+		console.log(totalScore); 
 		this.reset();
 	};
 } 
+
+
+
 
 
 
@@ -87,16 +114,4 @@ Player.prototype.update = function () {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-				var allowedKeys = {
-								37: 'left',
-								38: 'up',
-								39: 'right',
-								40: 'down'
-				};
-	player.handleInput(allowedKeys[e.keyCode]);
-});
 
-var player = new Player;
