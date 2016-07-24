@@ -1,6 +1,20 @@
 
 var totalScore = 0; 
 
+var possibleGems = [
+	'images/Gem Orange.png', 
+	'images/Gem Blue.png', 
+	'images/Gem Green.png'
+	];
+
+var possiblePlayers = [
+  'images/char-boy.png',
+  'images/char-cat-girl.png',
+  'images/char-horn-girl.png',
+  'images/char-pink-girl.png',
+  'images/char-princess-girl.png'
+];
+
 // Enemies our player must avoid
 var Enemy = function() {   
 								this.x = (Math.floor((Math.random() * -300)) - 100); 
@@ -48,7 +62,7 @@ var allEnemies = [];
 var Player = function() {
 				this.x = 200;
 				this.y = 400;
-				this.sprite ="images/char-boy.png";
+				this.sprite = possiblePlayers[Math.floor(Math.random() * 5)];
 				this.reset();
 }
 
@@ -98,13 +112,36 @@ Player.prototype.update = function () {
 } 
 
 
+var Gem = function() {
+	this.sprite = possibleGems[Math.floor(Math.random() * 3)];
+	this.x = (Math.floor((Math.random()) * 400) + 10); 
+	this.y = (Math.floor((Math.random()) * 200) + 10);
+};
+
+Gem.prototype.render = function () {
+	ctx.drawImage(Resources.get(this.sprite), this.x, this.y)
+}; 
+
+Gem.prototype.update = function() {
+				//if the player collects the gem
+				if(player.x > this.x - 35 & player.x < this.x + 35 & player.y > this.y - 30 & player.y < this.y +30) {
+					totalScore = totalScore + 5;
+					this.sprite = possibleGems[Math.floor(Math.random() * 3)];
+					this.x = (Math.floor((Math.random()) * 400) + 10); 
+					this.y = (Math.floor((Math.random()) * 200) + 10);
+				};
+};
 
 
 
+var displayScore = function () {
+	ctx.font = "20px Arial";
+	ctx.fillStyle = "white";
+	ctx.fillText("Score = " + totalScore, 5, 570);
+};
 
 
-
-
+var gem = new Gem; 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
