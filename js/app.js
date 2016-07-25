@@ -1,28 +1,17 @@
 
+//Sets the total score at 0 to begin with 
 var totalScore = 0; 
 
-var possibleGems = [
-	'images/Gem Orange.png', 
-	'images/Gem Blue.png', 
-	'images/Gem Green.png'
-	];
-
-var possiblePlayers = [
-  'images/char-boy.png',
-  'images/char-cat-girl.png',
-  'images/char-horn-girl.png',
-  'images/char-pink-girl.png',
-  'images/char-princess-girl.png'
-];
 
 // Enemies our player must avoid
 var Enemy = function() {   
+								//Set the enemies x start position to random point to left of screen, to stagger their arrival into game
 								this.x = (Math.floor((Math.random() * -300)) - 100); 
-								//console.log(this.x);
+								//Sets the enemies y position to one of the three lanes - either 55, 140 or 225 
 								this.y = (Math.floor((Math.random() * 3)) * 85) + 55;
-								//console.log(this.y);
+								//sets the enemies speed 
 								this.speed = (Math.floor((Math.random() * this.y)) + 125); 
-								//console.log(this.speed);  
+								//enemies image to the bug  
 								this.sprite = 'images/enemy-bug.png';
 								}; 
 
@@ -33,37 +22,49 @@ Enemy.prototype.render = function() {
 
 // Update the enemy's position with parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-					if (this.x < 500) {
+				if (this.x < 500) {
 								this.x += this.speed * dt; 
 				}
+				//if enemy moves off the right of he screen, moves back to left of the screen, and randomise which lane it is in
 				else  {
-								this.x = (Math.floor((Math.random() * -125)) - 50);; 
+								this.x = (Math.floor((Math.random() * -125)) - 50);
+								this.y = (Math.floor((Math.random() * 3)) * 85) + 55;
 				}
-				//if there is a collision between the player and the enemies then the position of the player is reset
-				if(player.x > this.x - 35 & player.x < this.x + 35 & player.y > this.y - 30 & player.y < this.y +30) {
-					totalScore = totalScore - 50;
-					console.log(totalScore); 
+				//if there is a collision between the player and the enemies then the deduction from score and the position of the player is reset
+				if(player.x > this.x - 50 & player.x < this.x + 50 & player.y > this.y - 40 & player.y < this.y + 40) {
+					totalScore = totalScore - 10;
 					player.reset();
 				}
 };
 
 
-//Create enemies - currently one a lane - may need to change. 
+//Function to create enemies 
 var allEnemies = []; 
 
 				(function setEnemies(){
+				//limits the no. of enemies to 6	
 				while (allEnemies.length < 6) {
 					allEnemies.push(new Enemy);
 					}
 				}
 				());
 
+//options for the different images of players 
+var possiblePlayers = [
+  'images/char-boy.png',
+  'images/char-cat-girl.png',
+  'images/char-horn-girl.png',
+  'images/char-pink-girl.png',
+  'images/char-princess-girl.png'
+];
+
 // Player info 
 var Player = function() {
+				//Starting position - grass bottom middle of the screen
 				this.x = 200;
 				this.y = 400;
+				//plater is a randomly selected  image each time game is loaded
 				this.sprite = possiblePlayers[Math.floor(Math.random() * 5)];
-				this.reset();
 }
 
 
@@ -72,7 +73,7 @@ Player.prototype.render = function () {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y)
 }; 
 
-//Reset to take player  back to starting position if collision or crosses all the lanes
+//Reset to retun player to starting position if collision or gets to water
 Player.prototype.reset = function () {
 	this.x = 200; 
 	this.y = 400; 
@@ -89,66 +90,74 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
-var player = new Player;
 
 //Player handles input from keys but is stopped from moving our of screen
 Player.prototype.handleInput = function (key) {
-				if(key === 'left' & this.x > 10) {
-					this.x = this.x - 40;
+				if(key === 'left' & this.x > -10) {
+					this.x = this.x - 30;
 					} else if (key === 'right' & this.x < 400) {
-					this.x = this.x + 40;
+					this.x = this.x + 30;
 				} else if (key === 'up') {
-					this.y = this.y - 40;
+					this.y = this.y - 30;
 				} else if (key === 'down' & this.y < 400) {
-					this.y = this.y + 40;}
-
+					this.y = this.y + 30;}
+				
 }; 
+
+//If players reaches the water 
 Player.prototype.update = function () {
-	if (this.y < -30) {
-		totalScore = totalScore + 100;
-		console.log(totalScore); 
+	if (this.y < -10) {
+		//then adds to the score
+		totalScore = totalScore + 20;
+		// and resets the players position
 		this.reset();
 	};
 } 
 
+//Create a new player
+var player = new Player;
+
+
+//a variable for the different coloured gem images
+var possibleGems = [
+	'images/Gem Orange.png', 
+	'images/Gem Blue.png', 
+	'images/Gem Green.png'
+	];
 
 var Gem = function() {
+	//picks a random coloured gem
 	this.sprite = possibleGems[Math.floor(Math.random() * 3)];
+	// Ensure Gem is loaded at a random place somewhere on the roads 
 	this.x = (Math.floor((Math.random()) * 400) + 10); 
 	this.y = (Math.floor((Math.random()) * 200) + 10);
 };
 
+//Renders the Gem 
 Gem.prototype.render = function () {
 	ctx.drawImage(Resources.get(this.sprite), this.x, this.y)
 }; 
 
+
+//Updates if player collects gem
 Gem.prototype.update = function() {
-				//if the player collects the gem
-				if(player.x > this.x - 35 & player.x < this.x + 35 & player.y > this.y - 30 & player.y < this.y +30) {
+				//if player gets to gem
+				if(player.x > this.x - 90 & player.x < this.x + 90 & player.y > this.y - 90 & player.y < this.y + 90) {
+					//then adds this amount to the score 
 					totalScore = totalScore + 5;
+					//and moves the gem to a new location - possibly with a different color
 					this.sprite = possibleGems[Math.floor(Math.random() * 3)];
 					this.x = (Math.floor((Math.random()) * 400) + 10); 
 					this.y = (Math.floor((Math.random()) * 200) + 10);
 				};
 };
 
+var gem = new Gem; 
 
 
+//Displays the player's score at the bottom of the page
 var displayScore = function () {
 	ctx.font = "20px Arial";
 	ctx.fillStyle = "white";
-	ctx.fillText("Score = " + totalScore, 5, 570);
+	ctx.fillText("Score = " + totalScore, 5, 575);
 };
-
-
-var gem = new Gem; 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-
-// need - player and allEnemies to be defined var player = new Player(); 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
-
