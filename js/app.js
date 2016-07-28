@@ -95,7 +95,7 @@ document.addEventListener('keyup', function(e) {
 
 //Player handles input from keys but is stopped from moving our of screen
 Player.prototype.handleInput = function (key) {
-	if(key === 'left' & this.x > -10) {
+	if(key === 'left' & this.x > 0) {
 		this.x = this.x - 101;
 	} else if (key === 'right' & this.x < 400) {
 	this.x = this.x + 101;
