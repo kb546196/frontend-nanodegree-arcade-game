@@ -1,4 +1,6 @@
 
+"use strict";
+
 //Sets the total score at 0 to begin with 
 var totalScore = 0; 
 
@@ -27,8 +29,8 @@ Enemy.prototype.update = function(dt) {
 	}
 	//if enemy moves off the right of he screen, moves back to left of the screen, and randomise which lane it is in
 	else  {
-			this.x = (Math.floor((Math.random() * -125)) - 50);
-			this.y = (Math.floor((Math.random() * 3)) * 85) + 55;
+		this.x = (Math.floor((Math.random() * -125)) - 50);
+		this.y = (Math.floor((Math.random() * 3)) * 85) + 55;
 	}
 	//if there is a collision between the player and an enemy - the deduction from score and the position of the player is reset
 	if(player.x > this.x - 50 & player.x < this.x + 50 & player.y > this.y - 40 & player.y < this.y + 40) {
@@ -94,13 +96,13 @@ document.addEventListener('keyup', function(e) {
 //Player handles input from keys but is stopped from moving our of screen
 Player.prototype.handleInput = function (key) {
 	if(key === 'left' & this.x > -10) {
-		this.x = this.x - 30;
+		this.x = this.x - 101;
 	} else if (key === 'right' & this.x < 400) {
-	this.x = this.x + 30;
+	this.x = this.x + 101;
 	} else if (key === 'up') {
-	this.y = this.y - 30;
+	this.y = this.y - 83;
 	} else if (key === 'down' & this.y < 400) {
-		this.y = this.y + 30;}	
+		this.y = this.y + 83;}	
 }; 
 
 //If players reaches the water 
